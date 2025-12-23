@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -6,7 +8,15 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.ksp)
     id("com.google.dagger.hilt.android")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
+//region Load properties from local.properties
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
+//endregion
 
 android {
     namespace = "com.task.newsapp"
@@ -20,6 +30,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val newsApiKey = localProperties.getProperty("NEWS_API_KEY") ?: ""
+        buildConfigField("String", "NEWS_API_KEY", "\"$newsApiKey\"")
     }
 
     buildTypes {
@@ -41,12 +54,13 @@ android {
         }
         buildFeatures {
             compose = true
+            buildConfig = true
         }
     }
 
     dependencies {
 
-        // 1. Core Android & Compose
+        //region 1- Core Android & Compose
         implementation(libs.androidx.core.ktx)
         implementation(libs.androidx.lifecycle.runtime.ktx)
         implementation(libs.androidx.activity.compose)
@@ -55,31 +69,37 @@ android {
         implementation(libs.androidx.compose.ui.graphics)
         implementation(libs.androidx.compose.ui.tooling.preview)
         implementation(libs.androidx.compose.material3)
+        //endregion
 
-        // 2. Navigation & ViewModel
+        //region 2- Navigation & ViewModel
         implementation(libs.androidx.navigation.compose)
         implementation(libs.androidx.lifecycle.viewmodel.compose)
         implementation(libs.androidx.lifecycle.runtime.compose)
+        //endregion
 
-        // 3. Hilt
+        //region 3- Hilt
         implementation(libs.hilt.android)
         ksp(libs.hilt.android.compiler)
         implementation(libs.androidx.hilt.navigation.compose)
+        //endregion
 
-        // 4. Networking (Retrofit & OkHttp)
+        //region 4- Networking (Retrofit & OkHttp)
         implementation(libs.retrofit)
         implementation(libs.converter.gson)
         implementation(libs.logging.interceptor)
+        //endregion
 
-        // 5. Local Database (Room)
+        //region 5- Local Database (Room)
         implementation(libs.androidx.room.runtime)
         implementation(libs.androidx.room.ktx)
         ksp(libs.androidx.room.compiler)
+        //endregion
 
-        // 6. Image Loading (Coil)
+        //region 6- Image Loading (Coil)
         implementation(libs.coil.compose)
+        //endregion
 
-        // Testing
+        //region Testing
         testImplementation(libs.junit)
         androidTestImplementation(libs.androidx.junit)
         androidTestImplementation(libs.androidx.espresso.core)
@@ -87,5 +107,6 @@ android {
         androidTestImplementation(libs.androidx.compose.ui.test.junit4)
         debugImplementation(libs.androidx.compose.ui.tooling)
         debugImplementation(libs.androidx.compose.ui.test.manifest)
+        //endregion
     }
 }
