@@ -1,0 +1,227 @@
+package com.task.newsapp.ui.screens.login
+
+import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.task.newsapp.R
+import com.task.newsapp.ui.theme.BorderGray
+import com.task.newsapp.ui.theme.DarkBlue
+import com.task.newsapp.ui.theme.Gray
+import com.task.newsapp.ui.theme.IconsGray
+import com.task.newsapp.ui.theme.LightGray
+import com.task.newsapp.ui.theme.NewsAppTheme
+import com.task.newsapp.ui.theme.PrimaryBlue
+import com.task.newsapp.ui.theme.White
+
+@Composable
+fun LoginScreen(
+    viewModel: LoginViewModel = hiltViewModel(),
+    onLoginSuccess: () -> Unit,
+    onNavigateToRegister: () -> Unit
+) {
+    val state by viewModel.loginState.collectAsState()
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    LaunchedEffect(state) {
+        when (state) {
+            is LoginState.Success -> {
+                onLoginSuccess()
+                viewModel.restState()
+            }
+
+            is LoginState.Error -> Toast.makeText(
+                context,
+                (state as LoginState.Error).message,
+                Toast.LENGTH_LONG
+            ).show()
+
+            else -> Unit
+        }
+    }
+    LoginScreenContent(
+        state = state,
+        email = email,
+        password = password,
+        onEmailChange = { email = it },
+        onPasswordChange = { password = it },
+        onLoginClick = viewModel::login,
+        onNavigateToRegister = onNavigateToRegister
+    )
+}
+
+@Composable
+fun LoginScreenContent(
+    state: LoginState,
+    email: String,
+    password: String,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLoginClick: (username: String, password: String) -> Unit,
+    onNavigateToRegister: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .background(LightGray)
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+            contentDescription = "App Logo",
+        )
+        Text(
+            text = "Welcome Back", style = MaterialTheme.typography.headlineLarge.copy(
+                fontWeight = FontWeight.Bold
+            )
+        )
+        Text(
+            text = "Please enter your details to sign in.",
+            style = MaterialTheme.typography.labelLarge.copy(
+                color = Gray
+            ),
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        OutlinedTextField(
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = DarkBlue,
+                    unfocusedTextColor = DarkBlue,
+                    focusedContainerColor = White,
+                    unfocusedContainerColor = White,
+                    unfocusedLabelColor = IconsGray,
+                    focusedBorderColor = IconsGray,
+                    unfocusedBorderColor = BorderGray,
+
+                ),
+            shape = RoundedCornerShape(8.dp),
+            value = email,
+            onValueChange = onEmailChange,
+            label = {
+                Text("Enter your Email",
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontStyle = FontStyle.Italic
+                )
+            ) },
+            modifier = Modifier
+                .fillMaxWidth(),
+            singleLine = true
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = DarkBlue,
+                    unfocusedTextColor = DarkBlue,
+                    focusedContainerColor = White,
+                    unfocusedContainerColor = White,
+                    unfocusedLabelColor = IconsGray,
+                    focusedBorderColor = IconsGray,
+                    unfocusedBorderColor = BorderGray,
+                ),
+            shape = RoundedCornerShape(8.dp),
+            value = password,
+            onValueChange = onPasswordChange,
+            label = { Text("Enter your Password",
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontStyle = FontStyle.Italic
+                ),
+            ) },
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier
+                .fillMaxWidth(),
+            singleLine = true
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        if (state is LoginState.Loading) {
+            CircularProgressIndicator()
+        } else {
+            Button(
+                onClick = { onLoginClick(email, password) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = PrimaryBlue,
+                    contentColor = White
+                ),
+                enabled = email.isNotEmpty() && password.isNotEmpty()
+            ) {
+                Text("Login")
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        TextButton(onClick = onNavigateToRegister) {
+            Text(
+                buildAnnotatedString {
+                    append("Don't have an account? ")
+                    withStyle(style = SpanStyle(
+                        fontWeight = FontWeight.Bold,
+                        color = PrimaryBlue)) {
+                        append("Register")
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    NewsAppTheme {
+        LoginScreenContent(
+            state = LoginState.Idle,
+            email = "asdf",
+            password = "asdf",
+            onEmailChange = {},
+            onPasswordChange = {},
+            onLoginClick = { _, _ -> },
+            onNavigateToRegister = {}
+        )
+    }
+
+}
