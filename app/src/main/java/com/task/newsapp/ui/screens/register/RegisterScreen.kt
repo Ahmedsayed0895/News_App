@@ -172,7 +172,7 @@ fun RegisterScreenContent(
 
                     ),
             shape = RoundedCornerShape(8.dp),
-            value = email,
+            value = email.trim().lowercase(),
             onValueChange = onEmailChange,
             label = {
                 Text(
