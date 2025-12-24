@@ -15,5 +15,6 @@ data class Article(
     val title: String?,
     val url: String?,
     val urlToImage: String?,
-    var isSaved: Boolean = false
+    var isSaved: Boolean = false,
+    var isBreaking: Boolean = false
 )

@@ -18,20 +18,45 @@ class NewsRepositoryImpl @Inject constructor(
         pageNumber: Int,
         category: String,
         searchQuery: String,
-    ): NewsResponse = newsApi.getBrakingNews(
-        countryCode = countryCode,
-        pageNumber = pageNumber,
-        category = category,
-        searchQuery = searchQuery
-    )
+    ): NewsResponse {
+        val response =
+            newsApi.getBrakingNews(
+                countryCode = countryCode,
+                pageNumber = pageNumber,
+                category = category,
+                searchQuery = searchQuery
+            )
+        if (pageNumber == 1) {
+            articleDao.clearCache()
+            response.articles.forEach { article ->
+                article.isBreaking = true
+                articleDao.insertArticles(article)
+            }
+        }
+        return response
+    }
+
+    override suspend fun getCachedBreakingNews(): List<Article> = articleDao.getCachedBreakingNews()
+
+    override suspend fun getCachedNews(): List<Article> = articleDao.getCachedArticles()
 
 
     override suspend fun searchNews(
         searchQuery: String,
         pageNumber: Int
-    ): NewsResponse = newsApi.searchForNews(searchQuery, pageNumber)
+    ): NewsResponse {
+        val response = newsApi.searchForNews(searchQuery, pageNumber)
+        if (response.articles.isNotEmpty()) {
+            response.articles.forEach { article ->
+                article.isBreaking = false
+                articleDao.insertArticles(article)
+            }
+        }
+        return response
+    }
 
-    override fun getSavedArticles(): Flow<List<Article>> = articleDao.getAllArticles()
+
+    override fun getSavedArticles(): Flow<List<Article>> = articleDao.getSavedArticle()
 
     override suspend fun insertArticle(article: Article): Long = articleDao.insertArticles(article)
 

@@ -142,12 +142,22 @@ class HomeViewModel @Inject constructor(
                 newsPage++
                 isPaginating = false
             } catch (e: Exception) {
-                _homeState.value = _homeState.value.copy(
-                    error = e.message ?: "An Error Occurred",
-                    isBreakingNewsLoading = false,
-                    isNewsLoading = false
-                )
+                val cachedNews = newsRepository.getCachedNews()
+                if (cachedNews.isNotEmpty()) {
+                    _homeState.value = _homeState.value.copy(
+                        allNews = cachedNews,
+                        isNewsLoading = false
+                    )
+                } else {
+
+                    _homeState.value = _homeState.value.copy(
+                        error = e.message ?: "An Error Occurred",
+                        isBreakingNewsLoading = false,
+                        isNewsLoading = false
+                    )
+                }
                 isPaginating = false
+
             }
         }
     }
@@ -170,10 +180,19 @@ class HomeViewModel @Inject constructor(
                     isBreakingNewsLoading = false
                 )
             } catch (e: Exception) {
-                _homeState.value = _homeState.value.copy(
-                    error = e.message ?: "An Error Occurred",
-                    isBreakingNewsLoading = false
-                )
+                val cachedBreakingNews = newsRepository.getCachedBreakingNews()
+                if (cachedBreakingNews.isNotEmpty()) {
+                    _homeState.value = _homeState.value.copy(
+                        breakingNews = cachedBreakingNews,
+                        isBreakingNewsLoading = false
+                    )
+                } else {
+                    _homeState.value = _homeState.value.copy(
+                        error = e.message ?: "No Internet",
+                        isBreakingNewsLoading = false
+                    )
+                }
+
             }
         }
     }

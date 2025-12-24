@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.task.newsapp.R
 import com.task.newsapp.data.model.Article
@@ -52,8 +53,10 @@ fun BreakingNewsCard(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(article.urlToImage)
                 .crossfade(true)
-                .placeholder(R.drawable.ic__breaking_news_white)
-                .error(R.drawable.ic__breaking_news)
+                .memoryCachePolicy(CachePolicy.ENABLED)
+                .diskCachePolicy( CachePolicy.ENABLED)
+                .error(R.drawable.ic_place_holder)
+                .placeholder(R.drawable.ic_breaking_news_white)
                 .build(),
             contentDescription = "Breaking News Image",
             modifier = Modifier.fillMaxSize(),

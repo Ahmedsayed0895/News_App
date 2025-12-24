@@ -32,7 +32,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
+import com.task.newsapp.R
 import com.task.newsapp.data.model.Article
 import com.task.newsapp.data.model.Source
 import com.task.newsapp.ui.theme.Gray
@@ -63,6 +65,9 @@ fun NewsItem(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(article.urlToImage)
                     .crossfade(true)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .diskCachePolicy( CachePolicy.ENABLED)
+                    .error(R.drawable.ic_place_holder)
                     .build(),
                 contentDescription = "News Image",
                 modifier = Modifier
