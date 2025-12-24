@@ -125,7 +125,11 @@ fun HomeScreen(
                         )
                     }
 
-                    items(state.allNews) { article ->
+                    items(state.allNews.size) { index ->
+                        val article = state.allNews[index]
+                        if (index >= state.allNews.size -1 && !state.isNewsLoading){
+                            viewModel.getNewsByCategory(state.selectedCategory)
+                        }
                         NewsItem(
                             article = article,
                             onClick = { navigateToDetails(navController, article.url) },

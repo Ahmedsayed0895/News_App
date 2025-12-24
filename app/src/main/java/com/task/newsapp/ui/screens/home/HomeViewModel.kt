@@ -18,7 +18,9 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     private val _homeState = MutableStateFlow(HomeState())
     val homeState = _homeState.asStateFlow()
-    var searchJob: Job? = null
+    var newsPage = 1
+    private var isPaginating = false
+    private var searchJob: Job? = null
 
 
     init {
@@ -69,13 +71,15 @@ class HomeViewModel @Inject constructor(
     //endregion
 
     fun onCategorySelected(category: String) {
-        _homeState.value = _homeState.value.copy(selectedCategory = category)
+        newsPage = 1
+        _homeState.value = _homeState.value.copy(selectedCategory = category, allNews = emptyList())
         getNewsByCategory(category)
         getBreakingNews(category)
     }
 
 
     fun onSearchQueryChanged(query: String) {
+        newsPage = 1
         _homeState.value = _homeState.value.copy(searchQuery = query)
         if (query.isBlank()) {
             getNewsByCategory(_homeState.value.selectedCategory)
@@ -85,40 +89,65 @@ class HomeViewModel @Inject constructor(
         searchJob = viewModelScope.launch {
             try {
                 delay(500)
-                _homeState.value = _homeState.value.copy(isNewsLoading = true)
-                val response = newsRepository.searchNews(query, 1)
+                if (newsPage == 1) {
+                    _homeState.value = _homeState.value.copy(isNewsLoading = true)
+                }
+                if (isPaginating && newsPage > 1) return@launch
+                isPaginating = true
+                val response = newsRepository.searchNews(query, newsPage)
                 val savedArticles = mapToSavedArticles(response.articles)
+                val paginatedNews = if (newsPage == 1) {
+                    savedArticles
+                } else {
+                    _homeState.value.allNews + savedArticles
+                }
                 _homeState.value = _homeState.value.copy(
-                    allNews = savedArticles,
+                    allNews = paginatedNews,
                     isNewsLoading = false,
                     error = null
                 )
+                newsPage++
+                isPaginating = false
             } catch (e: Exception) {
                 _homeState.value = _homeState.value.copy(
                     error = e.message ?: "An Error Occurred",
                 )
+                isPaginating = false
 
             }
         }
     }
 
-    private fun getNewsByCategory(category: String) {
+    fun getNewsByCategory(category: String) {
         viewModelScope.launch {
             try {
-                _homeState.value = _homeState.value.copy(isNewsLoading = true)
-                val allNews = newsRepository.searchNews(searchQuery = category, pageNumber = 1)
+                if (newsPage == 1) {
+                    _homeState.value = _homeState.value.copy(isNewsLoading = true)
+                }
+                if (isPaginating && newsPage > 1) return@launch
+                isPaginating = true
+                val allNews =
+                    newsRepository.searchNews(searchQuery = category, pageNumber = newsPage)
                 val savedArticles = mapToSavedArticles(allNews.articles)
+                val paginatedNews = if (newsPage == 1) {
+                    savedArticles
+                } else {
+                    _homeState.value.allNews + savedArticles
+                }
                 _homeState.value = _homeState.value.copy(
-                    allNews = savedArticles,
+                    allNews = paginatedNews,
                     isNewsLoading = false,
                     error = null
                 )
+                newsPage++
+                isPaginating = false
             } catch (e: Exception) {
                 _homeState.value = _homeState.value.copy(
                     error = e.message ?: "An Error Occurred",
                     isBreakingNewsLoading = false,
                     isNewsLoading = false
                 )
+                isPaginating = false
             }
         }
     }
