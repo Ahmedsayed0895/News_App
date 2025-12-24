@@ -3,6 +3,7 @@ package com.task.newsapp.ui.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.task.newsapp.data.model.Article
+import com.task.newsapp.data.util.NetworkExceptions
 import com.task.newsapp.domain.repository.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -79,6 +80,7 @@ class HomeViewModel @Inject constructor(
 
 
     fun onSearchQueryChanged(query: String) {
+
         newsPage = 1
         _homeState.value = _homeState.value.copy(searchQuery = query)
         if (query.isBlank()) {
@@ -109,8 +111,12 @@ class HomeViewModel @Inject constructor(
                 newsPage++
                 isPaginating = false
             } catch (e: Exception) {
+                val errorMessages = NetworkExceptions.getErrorMessage(e)
+
                 _homeState.value = _homeState.value.copy(
-                    error = e.message ?: "An Error Occurred",
+                    error = errorMessages,
+                    isBreakingNewsLoading = false,
+                    isNewsLoading = false
                 )
                 isPaginating = false
 
@@ -142,6 +148,7 @@ class HomeViewModel @Inject constructor(
                 newsPage++
                 isPaginating = false
             } catch (e: Exception) {
+                val errorMessages = NetworkExceptions.getErrorMessage(e)
                 val cachedNews = newsRepository.getCachedNews()
                 if (cachedNews.isNotEmpty()) {
                     _homeState.value = _homeState.value.copy(
@@ -151,7 +158,7 @@ class HomeViewModel @Inject constructor(
                 } else {
 
                     _homeState.value = _homeState.value.copy(
-                        error = e.message ?: "An Error Occurred",
+                        error = errorMessages,
                         isBreakingNewsLoading = false,
                         isNewsLoading = false
                     )
@@ -180,6 +187,7 @@ class HomeViewModel @Inject constructor(
                     isBreakingNewsLoading = false
                 )
             } catch (e: Exception) {
+                val errorMessages = NetworkExceptions.getErrorMessage(e)
                 val cachedBreakingNews = newsRepository.getCachedBreakingNews()
                 if (cachedBreakingNews.isNotEmpty()) {
                     _homeState.value = _homeState.value.copy(
@@ -188,7 +196,7 @@ class HomeViewModel @Inject constructor(
                     )
                 } else {
                     _homeState.value = _homeState.value.copy(
-                        error = e.message ?: "No Internet",
+                        error = errorMessages,
                         isBreakingNewsLoading = false
                     )
                 }

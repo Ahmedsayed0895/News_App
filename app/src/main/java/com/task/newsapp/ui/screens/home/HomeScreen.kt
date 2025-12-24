@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -37,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.task.newsapp.ui.navigation.Routes
+import com.task.newsapp.ui.screens.ErrorScreen
+import com.task.newsapp.ui.screens.LottieAnimated
 import com.task.newsapp.ui.theme.PrimaryBlue
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -84,11 +85,11 @@ fun HomeScreen(
 
             if (state.isNewsLoading || state.isBreakingNewsLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+                    LottieAnimated(false)
                 }
             } else if (state.error != null) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = state.error ?: "Unknown Error", color = Color.Red)
+                ErrorScreen(message = state.error ?: "Unknown Error") {
+                    viewModel.getNewsByCategory(state.selectedCategory)
                 }
             } else {
                 LazyColumn(
@@ -127,7 +128,7 @@ fun HomeScreen(
 
                     items(state.allNews.size) { index ->
                         val article = state.allNews[index]
-                        if (index >= state.allNews.size -1 && !state.isNewsLoading){
+                        if (index >= state.allNews.size - 1 && !state.isNewsLoading) {
                             viewModel.getNewsByCategory(state.selectedCategory)
                         }
                         NewsItem(

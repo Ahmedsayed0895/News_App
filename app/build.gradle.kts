@@ -96,9 +96,11 @@ android {
         ksp(libs.androidx.room.compiler)
         //endregion
 
-        //region 6- Image Loading (Coil)
+        //region 6- Images
         implementation(libs.coil.compose)
+        implementation (libs.lottie.compose)
         //endregion
+
 
         //region Testing
         testImplementation(libs.junit)
