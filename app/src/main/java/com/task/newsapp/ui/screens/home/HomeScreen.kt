@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.task.newsapp.ui.Routs
 import com.task.newsapp.ui.theme.PrimaryBlue
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -153,6 +154,7 @@ fun SearchBarSection(query: String, onQueryChange: (String) -> Unit) {
         },
         shape = MaterialTheme.shapes.medium,
         singleLine = true,
+        textStyle = MaterialTheme.typography.bodyMedium.copy(color = Color.Black),
     )
 }
 
@@ -191,7 +193,7 @@ fun CategoryChips(
 fun navigateToDetails(navController: NavController, url: String?) {
     if (url != null) {
         val encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
-        // navController.navigate("${Routes.DETAILS}/$encodedUrl")
+         navController.navigate("${Routs.DETAILS}/$encodedUrl")
         println("Opening URL: $url")
     }
 }
