@@ -1,18 +1,23 @@
 package com.task.newsapp.ui.screens.home
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,11 +35,15 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.task.newsapp.data.model.Article
 import com.task.newsapp.data.model.Source
+import com.task.newsapp.ui.theme.Gray
+import com.task.newsapp.ui.theme.PrimaryBlue
+import com.task.newsapp.ui.theme.White
 
 @Composable
 fun NewsItem(
     article: Article,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onSaveClick: (Article) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -69,27 +78,56 @@ fun NewsItem(
             ) {
                 Text(
                     text = article.title ?: "No Title",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
-
                 Text(
-                    text = article.source?.name ?: "Unknown Source",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = Color.Gray
+                    text = article.description ?: "No Description",
+                    style = MaterialTheme.typography.bodySmall.copy(color = Gray),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(vertical = 4.dp)
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = article.source?.name ?: "Unknown Source",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(PrimaryBlue)
+                            .padding(vertical = 4.dp, horizontal = 8.dp)
+                    )
 
-                Text(
-                    text = article.publishedAt?.substring(0, 10) ?: "",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.LightGray
-                )
+                    Text(
+                        text = article.publishedAt?.substring(0, 10) ?: "",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.LightGray,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                    Spacer(Modifier.weight(1f))
+
+                    IconButton(
+                        onClick = { onSaveClick(article) },
+                    ) {
+                        Icon(
+                            imageVector =
+                                if (article.isSaved) Icons.Default.Bookmark
+                                else Icons.Default.BookmarkBorder,
+                            contentDescription = "Save Article",
+                            tint = if (article.isSaved) PrimaryBlue else Gray,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
             }
+
         }
     }
 }
@@ -102,7 +140,7 @@ fun NewsItemPreview() {
         article = Article(
             author = "Author",
             content = "Content",
-            description = "Description",
+            description = "The new features promise to change The new features promise to chang",
             publishedAt = "2023-07-22",
             source = Source(
                 id = "1",
@@ -113,6 +151,7 @@ fun NewsItemPreview() {
             urlToImage = "https://example.com/image.jpg",
             id = null
         ),
-        {}
+        onClick = {},
+        onSaveClick = {}
     )
 }

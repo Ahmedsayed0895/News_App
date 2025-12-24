@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "articles")
-class Article(
+data class Article(
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null,
     val author: String?,
@@ -14,5 +14,6 @@ class Article(
     val source: Source?,
     val title: String?,
     val url: String?,
-    val urlToImage: String?
+    val urlToImage: String?,
+    var isSaved: Boolean = false
 )
