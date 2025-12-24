@@ -15,8 +15,16 @@ class NewsRepositoryImpl @Inject constructor(
 
     override suspend fun getBrakingNews(
         countryCode: String,
-        pageNumber: Int
-    ): NewsResponse = newsApi.getBrakingNews(countryCode, pageNumber)
+        pageNumber: Int,
+        category: String,
+        searchQuery: String,
+    ): NewsResponse = newsApi.getBrakingNews(
+        countryCode = countryCode,
+        pageNumber = pageNumber,
+        category = category,
+        searchQuery = searchQuery
+    )
+
 
     override suspend fun searchNews(
         searchQuery: String,

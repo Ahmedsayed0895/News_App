@@ -11,8 +11,10 @@ interface NewsApi{
     suspend fun getBrakingNews(
         @Query("country") countryCode: String = "eg",
         @Query("page") pageNumber: Int = 1,
-        @Query("apiKey") apiKey: String = API_KEY
-    ): NewsResponse
+        @Query("apiKey") apiKey: String = API_KEY,
+        @Query("q") searchQuery: String,
+        @Query("category") category: String
+        ): NewsResponse
 
     @GET("everything")
     suspend fun searchForNews(
