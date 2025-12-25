@@ -36,6 +36,7 @@ class LoginViewModel @Inject constructor(
                 if (user != null) {
                     _loginState.value = LoginState.Success("Login Successful")
                     userPreferences.saveLoginState(true)
+                    userPreferences.saveEmail(email)
                 } else {
                     _loginState.value = LoginState.Error("Invalid Credentials")
                 }

@@ -16,8 +16,17 @@ class UserPreferences @Inject constructor(
 
     companion object {
         private const val KEY_IS_LOGGED_IN = "is_logged_in"
+        private const val KEY_EMAIL = "username"
     }
-
+    fun saveEmail(email: String) {
+        prefs.edit {
+            putBoolean(KEY_IS_LOGGED_IN, true)
+                .putString(KEY_EMAIL, email)
+        }
+    }
+    fun getUserEmail(): String {
+        return prefs.getString(KEY_EMAIL, "@USER") ?: "@USER"
+    }
     fun saveLoginState(isLoggedIn: Boolean) {
         prefs.edit { putBoolean(KEY_IS_LOGGED_IN, isLoggedIn) }
     }
