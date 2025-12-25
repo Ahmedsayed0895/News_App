@@ -5,11 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -36,7 +33,7 @@ import com.task.newsapp.ui.component.AppTextField
 import com.task.newsapp.ui.component.BreakingNewsCard
 import com.task.newsapp.ui.component.LottieAnimated
 import com.task.newsapp.ui.component.NewsItem
-import com.task.newsapp.ui.navigation.Routes
+import com.task.newsapp.ui.Routes
 import com.task.newsapp.ui.screens.ErrorScreen
 import com.task.newsapp.ui.theme.Gray
 import com.task.newsapp.ui.theme.PrimaryBlue
@@ -72,101 +69,95 @@ fun HomeScreenContent(
 
     ) {
 
-    Box(
+    LazyColumn(
         modifier = Modifier
             .background(Color(0xFFF3F4F6))
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
+            .fillMaxSize(),
+        contentPadding = PaddingValues(vertical = 16.dp)
     ) {
-
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 16.dp)
-        ) {
+        item {
+            SearchBarSection(
+                query = state.searchQuery,
+                onQueryChange = onQueryChange
+            )
+        }
+        stickyHeader {
+            CategoryChips(
+                categories = state.categories,
+                selectedCategory = state.selectedCategory,
+                onCategorySelected = onCategorySelected
+            )
+        }
+        if (state.isNewsLoading && state.isBreakingNewsLoading) {
             item {
-                SearchBarSection(
-                    query = state.searchQuery,
-                    onQueryChange = onQueryChange
-                )
-            }
-            stickyHeader {
-                CategoryChips(
-                    categories = state.categories,
-                    selectedCategory = state.selectedCategory,
-                    onCategorySelected = onCategorySelected
-                )
-            }
-            if (state.isNewsLoading && state.isBreakingNewsLoading) {
-                item {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        LottieAnimated(false)
-                    }
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    LottieAnimated(false)
                 }
-            } else if (state.error != null) {
-                item {
-                    ErrorScreen(
-                        message = state.error, onRetry = { onRetry(state.selectedCategory) })
-                }
+            }
+        } else if (state.error != null) {
+            item {
+                ErrorScreen(
+                    message = state.error, onRetry = { onRetry(state.selectedCategory) })
+            }
 
-            } else {
+        } else {
 
-                item {
-                    Text(
-                        text = "Breaking News",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = Gray
-                        ),
-                        modifier = Modifier.padding(
-                            start = 16.dp,
-                            top = 8.dp,
-                            bottom = 8.dp
-                        )
+            item {
+                Text(
+                    text = "Breaking News",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = Gray
+                    ),
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        top = 8.dp,
+                        bottom = 8.dp
                     )
-                }
+                )
+            }
 
-                item {
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        items(state.breakingNews) { article ->
-                            BreakingNewsCard(article = article) {
-                                navigateToDetails(navController, article.url)
-                            }
+            item {
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(state.breakingNews) { article ->
+                        BreakingNewsCard(article = article) {
+                            navigateToDetails(navController, article.url)
                         }
                     }
                 }
-
-                item {
-                    Text(
-                        text = "Latest News",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = Gray
-                        ),
-                        modifier = Modifier.padding(
-                            start = 16.dp,
-                            top = 24.dp,
-                        )
-                    )
-                }
-                items(state.allNews.size) { index ->
-                    val article = state.allNews[index]
-                    if (index >= state.allNews.size - 1 && !state.isNewsLoading) {
-                        onRetry
-                    }
-                    NewsItem(
-                        article = article,
-                        onClick = { navigateToDetails(navController, article.url) },
-                        onSaveClick = { onSaveClick(it) })
-
-
-                }
             }
 
+            item {
+                Text(
+                    text = "Latest News",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = Gray
+                    ),
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        top = 24.dp,
+                    )
+                )
+            }
+            items(state.allNews.size) { index ->
+                val article = state.allNews[index]
+                if (index >= state.allNews.size - 1 && !state.isNewsLoading) {
+                    onRetry
+                }
+                NewsItem(
+                    article = article,
+                    onClick = { navigateToDetails(navController, article.url) },
+                    onSaveClick = { onSaveClick(it) })
 
+
+            }
         }
+
+
     }
 }
 

@@ -1,6 +1,6 @@
 package com.task.newsapp.data.dataSource.remote
 
-import com.task.newsapp.core.Constants.API_KEY
+import com.task.newsapp.data.dataSource.remote.Constants.API_KEY
 import com.task.newsapp.data.model.NewsResponse
 import retrofit2.http.GET
 import retrofit2.http.Query

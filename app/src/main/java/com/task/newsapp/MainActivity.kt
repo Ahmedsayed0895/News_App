@@ -5,8 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.task.newsapp.data.dataSource.local.UserPreferences
-import com.task.newsapp.ui.navigation.AppNavigation
-import com.task.newsapp.ui.navigation.Routes
+import com.task.newsapp.ui.Routes
 import com.task.newsapp.ui.theme.NewsAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

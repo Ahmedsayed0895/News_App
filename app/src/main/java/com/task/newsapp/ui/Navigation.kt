@@ -1,11 +1,10 @@
-package com.task.newsapp.ui.navigation
+package com.task.newsapp.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -29,6 +28,8 @@ import com.task.newsapp.ui.screens.favoriteArticles.FavoriteArticleScreen
 import com.task.newsapp.ui.screens.home.HomeScreen
 import com.task.newsapp.ui.screens.login.LoginScreen
 import com.task.newsapp.ui.screens.register.RegisterScreen
+import com.task.newsapp.ui.theme.PrimaryBlue
+import com.task.newsapp.ui.theme.White
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
@@ -88,8 +89,11 @@ fun AppNavigation(
                                 }
                             },
                             colors = NavigationBarItemDefaults.colors(
-                                indicatorColor = MaterialTheme.colorScheme.primaryContainer
-                            )
+                                indicatorColor = PrimaryBlue,
+                                selectedIconColor = White,
+                                selectedTextColor = PrimaryBlue,
+                            ),
+
                         )
                     }
                 }
@@ -100,7 +104,7 @@ fun AppNavigation(
         NavHost(
             navController = navController,
             startDestination = startDestination,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
         ) {
 
             composable(Routes.LOGIN) {

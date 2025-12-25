@@ -1,4 +1,4 @@
-package com.task.newsapp.core.di
+package com.task.newsapp.di
 
 import com.task.newsapp.data.repository.AuthRepositoryImpl
 import com.task.newsapp.data.repository.NewsRepositoryImpl

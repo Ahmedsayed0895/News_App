@@ -1,4 +1,4 @@
-package com.task.newsapp.core
+package com.task.newsapp.data.dataSource.remote
 
 import com.task.newsapp.BuildConfig
 
