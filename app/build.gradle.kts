@@ -101,6 +101,11 @@ android {
         implementation (libs.lottie.compose)
         //endregion
 
+        //region 7- Adaptive
+        implementation(libs.androidx.compose.adaptive)
+        //endregion
+
+
 
         //region Testing
         testImplementation(libs.junit)
@@ -113,3 +118,4 @@ android {
         //endregion
     }
 }
+

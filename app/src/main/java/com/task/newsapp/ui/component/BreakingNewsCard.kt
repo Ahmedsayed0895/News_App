@@ -1,6 +1,7 @@
 package com.task.newsapp.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,7 +44,8 @@ fun BreakingNewsCard(
             .width(230.dp)
             .height(150.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(color = PrimaryBlue),
+            .clickable { onClick() }
+        .background(color = PrimaryBlue),
 
         contentAlignment = Alignment.BottomStart
 

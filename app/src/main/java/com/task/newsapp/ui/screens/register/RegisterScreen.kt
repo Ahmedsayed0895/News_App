@@ -6,11 +6,15 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -22,6 +26,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -49,6 +54,7 @@ import com.task.newsapp.ui.theme.LightGray
 import com.task.newsapp.ui.theme.NewsAppTheme
 import com.task.newsapp.ui.theme.PrimaryBlue
 import com.task.newsapp.ui.theme.White
+import com.task.newsapp.ui.util.DevicePosture
 
 @Composable
 fun RegisterScreen(
@@ -102,115 +108,250 @@ fun RegisterScreenContent(
     onRegisterClick: (user: User) -> Unit,
     onNavigateToLogin: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .background(LightGray)
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "App Logo",
-        )
-        Text(
-            text = "Create Account", style = MaterialTheme.typography.headlineLarge.copy(
-                fontWeight = FontWeight.Bold,
-                color = PrimaryBlue
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val deviceConfiguration = DevicePosture.fromWindowSizeClass(windowSizeClass)
+    when (deviceConfiguration) {
+        DevicePosture.MOBILE_PORTRAIT,
+        DevicePosture.TABLET_PORTRAIT -> {
+            Column(
+                modifier = Modifier
+                    .background(LightGray)
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             )
-        )
-        Text(
-            text = "Sign up to get the latest news updates.",
-            style = MaterialTheme.typography.labelLarge.copy(
-                color = Gray
-            ),
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-        AppTextField(
-            value = username,
-            onValueChange = onUsernameChange,
-            placeholderText = "Enter your Name",
-            leadingIcon = Icons.Default.Person,
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        AppTextField(
-            value = email.trim().lowercase(),
-            onValueChange = onEmailChange,
-            placeholderText = "Enter your Email",
-            leadingIcon = Icons.Default.Email,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        AppTextField(
-            value = password,
-            onValueChange = onPasswordChange,
-            placeholderText = "Enter your Password",
-            leadingIcon = Icons.Default.Lock,
-            isPassword = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        if (state is RegisterState.Loading) {
-            CircularProgressIndicator()
-        } else {
-            Button(
-                onClick = {
-                    onRegisterClick(
-                        User(
-                            name = username,
-                            email = email,
-                            password = password
-                        )
+            {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    contentDescription = "App Logo",
+                )
+                Text(
+                    text = "Create Account", style = MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = PrimaryBlue
                     )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = PrimaryBlue,
-                    contentColor = White,
-                    disabledContainerColor = Gray,
-                    disabledContentColor = LightGray
-                ),
-                enabled = email.isNotEmpty()
-                        && password.isNotEmpty()
-                        && username.isNotEmpty()
-            ) {
-                Text("Register")
+                )
+                Text(
+                    text = "Sign up to get the latest news updates.",
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        color = Gray
+                    ),
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+                AppTextField(
+                    value = username,
+                    onValueChange = onUsernameChange,
+                    placeholderText = "Enter your Name",
+                    leadingIcon = Icons.Default.Person,
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                AppTextField(
+                    value = email.trim().lowercase(),
+                    onValueChange = onEmailChange,
+                    placeholderText = "Enter your Email",
+                    leadingIcon = Icons.Default.Email,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                AppTextField(
+                    value = password,
+                    onValueChange = onPasswordChange,
+                    placeholderText = "Enter your Password",
+                    leadingIcon = Icons.Default.Lock,
+                    isPassword = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                if (state is RegisterState.Loading) {
+                    CircularProgressIndicator()
+                } else {
+                    Button(
+                        onClick = {
+                            onRegisterClick(
+                                User(
+                                    name = username,
+                                    email = email,
+                                    password = password
+                                )
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = PrimaryBlue,
+                            contentColor = White,
+                            disabledContainerColor = Gray,
+                            disabledContentColor = LightGray
+                        ),
+                        enabled = email.isNotEmpty()
+                                && password.isNotEmpty()
+                                && username.isNotEmpty()
+                    ) {
+                        Text("Register")
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                TextButton(onClick = onNavigateToLogin) {
+                    Text(
+                        buildAnnotatedString {
+                            withStyle(
+                                style = SpanStyle(
+                                    color = Gray
+                                )
+                            ) {
+                                append("Already registered? ? ")
+                            }
+                            withStyle(
+                                style = SpanStyle(
+                                    fontWeight = FontWeight.Bold,
+                                    color = PrimaryBlue
+                                )
+                            ) {
+                                append("Login")
+                            }
+                        }
+                    )
+                }
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        TextButton(onClick = onNavigateToLogin) {
-            Text(
-                buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            color = Gray
-                        )
-                    ) {
-                        append("Already registered? ? ")
-                    }
-                    withStyle(
-                        style = SpanStyle(
+
+        DevicePosture.MOBILE_LANDSCAPE,
+        DevicePosture.TABLET_LANDSCAPE,
+        DevicePosture.BIG_SCREEN -> {
+            Row(
+                modifier = Modifier
+                    .background(LightGray)
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.systemBars)
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        contentDescription = "App Logo",
+                    )
+                    Text(
+                        text = "Create Account",
+                        style = MaterialTheme.typography.headlineLarge.copy(
                             fontWeight = FontWeight.Bold,
                             color = PrimaryBlue
                         )
-                    ) {
-                        append("Login")
+                    )
+                    Text(
+                        text = "Sign up to get the latest news updates.",
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            color = Gray
+                        ),
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                )
+                {
+                    AppTextField(
+                        value = username,
+                        onValueChange = onUsernameChange,
+                        placeholderText = "Enter your Name",
+                        leadingIcon = Icons.Default.Person,
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    AppTextField(
+                        value = email.trim().lowercase(),
+                        onValueChange = onEmailChange,
+                        placeholderText = "Enter your Email",
+                        leadingIcon = Icons.Default.Email,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    AppTextField(
+                        value = password,
+                        onValueChange = onPasswordChange,
+                        placeholderText = "Enter your Password",
+                        leadingIcon = Icons.Default.Lock,
+                        isPassword = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    if (state is RegisterState.Loading) {
+                        CircularProgressIndicator()
+                    } else {
+                        Button(
+                            onClick = {
+                                onRegisterClick(
+                                    User(
+                                        name = username,
+                                        email = email,
+                                        password = password
+                                    )
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = PrimaryBlue,
+                                contentColor = White,
+                                disabledContainerColor = Gray,
+                                disabledContentColor = LightGray
+                            ),
+                            enabled = email.isNotEmpty()
+                                    && password.isNotEmpty()
+                                    && username.isNotEmpty()
+                        ) {
+                            Text("Register")
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextButton(onClick = onNavigateToLogin) {
+                        Text(
+                            buildAnnotatedString {
+                                withStyle(
+                                    style = SpanStyle(
+                                        color = Gray
+                                    )
+                                ) {
+                                    append("Already registered? ? ")
+                                }
+                                withStyle(
+                                    style = SpanStyle(
+                                        fontWeight = FontWeight.Bold,
+                                        color = PrimaryBlue
+                                    )
+                                ) {
+                                    append("Login")
+                                }
+                            }
+                        )
                     }
                 }
-            )
+            }
+
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -228,5 +369,4 @@ fun RegisterScreenPreview() {
             onUsernameChange = {}
         )
     }
-
 }

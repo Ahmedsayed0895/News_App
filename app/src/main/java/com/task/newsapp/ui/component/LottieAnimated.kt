@@ -24,6 +24,7 @@ fun LottieAnimated(type: LottieType) {
         LottieType.ERROR -> R.raw.error
         LottieType.LOADING -> R.raw.searching
         LottieType.REFRESH -> R.raw.refresh
+        LottieType.EMPTY -> R.raw.empty
     }
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(resource))
     val progress by animateLottieCompositionAsState(
@@ -43,5 +44,6 @@ fun LottieAnimated(type: LottieType) {
 enum class LottieType {
     ERROR,
     LOADING,
-    REFRESH
+    REFRESH,
+    EMPTY
 }

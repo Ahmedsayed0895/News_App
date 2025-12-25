@@ -1,8 +1,11 @@
 package com.task.newsapp.ui.screens.favoriteArticles
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -19,6 +22,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.task.newsapp.ui.component.LottieAnimated
+import com.task.newsapp.ui.component.LottieType
 import com.task.newsapp.ui.component.NewsItem
 import com.task.newsapp.ui.screens.home.navigateToDetails
 import com.task.newsapp.ui.theme.PrimaryBlue
@@ -48,8 +53,11 @@ fun FavoriteArticleScreen(
             )
 
         },
-        containerColor = Color(0xFFF3F4F6)
-    ) { padding ->
+        containerColor = Color(0xFFF3F4F6),
+        modifier = Modifier.windowInsetsPadding(WindowInsets.safeContent),
+
+
+        ) { padding ->
 
         if (articles.isEmpty()) {
             Box(
@@ -58,7 +66,7 @@ fun FavoriteArticleScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                Text("No favorites yet ️", color = PrimaryBlue)
+                LottieAnimated(LottieType.EMPTY)
             }
         } else {
             LazyColumn(

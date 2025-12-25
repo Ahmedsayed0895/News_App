@@ -3,7 +3,6 @@ package com.task.newsapp.ui
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -109,12 +108,11 @@ fun AppNavigation(
                 }
             }
         }
-    ) { innerPadding ->
+    ) { _ ->
 
         NavHost(
             navController = navController,
             startDestination = startDestination,
-            modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
             enterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Left,

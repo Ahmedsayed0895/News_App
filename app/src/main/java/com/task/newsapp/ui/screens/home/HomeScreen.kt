@@ -5,9 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -31,12 +34,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.task.newsapp.data.model.Article
+import com.task.newsapp.ui.Routes
 import com.task.newsapp.ui.component.AppTextField
 import com.task.newsapp.ui.component.BreakingNewsCard
 import com.task.newsapp.ui.component.LottieAnimated
-import com.task.newsapp.ui.component.NewsItem
-import com.task.newsapp.ui.Routes
 import com.task.newsapp.ui.component.LottieType
+import com.task.newsapp.ui.component.NewsItem
 import com.task.newsapp.ui.screens.ErrorScreen
 import com.task.newsapp.ui.theme.Gray
 import com.task.newsapp.ui.theme.PrimaryBlue
@@ -72,12 +75,14 @@ fun HomeScreenContent(
     onSaveClick: (Article) -> Unit,
     onRefresh: () -> Unit
 
-    ) {
+) {
 
     PullToRefreshBox(
         isRefreshing = state.isRefresh,
         onRefresh = onRefresh,
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeContent),
     ) {
         LazyColumn(
             modifier = Modifier
