@@ -6,6 +6,15 @@
 
 A comprehensive, robust Android news application built with modern Android development standards. This app allows users to browse breaking news, search for specific topics, filter by categories, and save articles for offline reading. It features a sophisticated offline-caching mechanism ensuring a seamless user experience even without internet connectivity.
 
+<div align="center">
+    
+  <h3>
+     <a href="https://github.com/Ahmedsayed0895/News_App/releases/latest">Download Latest APK</a>
+  </h3>
+  <p>Run the app immediately without compiling (CI/CD Automated Build)</p>
+
+</div>
+
 ---
 
 <img width="1024" height="474" alt="news app poster" src="https://github.com/user-attachments/assets/2f7e7e06-8cc0-45a0-b518-9d11a0a0a042" />
