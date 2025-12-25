@@ -116,7 +116,8 @@ fun RegisterScreenContent(
         )
         Text(
             text = "Create Account", style = MaterialTheme.typography.headlineLarge.copy(
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = PrimaryBlue
             )
         )
         Text(
@@ -175,7 +176,9 @@ fun RegisterScreenContent(
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = PrimaryBlue,
-                    contentColor = White
+                    contentColor = White,
+                    disabledContainerColor = Gray,
+                    disabledContentColor = LightGray
                 ),
                 enabled = email.isNotEmpty()
                         && password.isNotEmpty()
@@ -188,7 +191,13 @@ fun RegisterScreenContent(
         TextButton(onClick = onNavigateToLogin) {
             Text(
                 buildAnnotatedString {
-                    append("Already registered? ? ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = Gray
+                        )
+                    ) {
+                        append("Already registered? ? ")
+                    }
                     withStyle(
                         style = SpanStyle(
                             fontWeight = FontWeight.Bold,

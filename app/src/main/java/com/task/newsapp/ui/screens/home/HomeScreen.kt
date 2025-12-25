@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -18,6 +19,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,6 +36,7 @@ import com.task.newsapp.ui.component.BreakingNewsCard
 import com.task.newsapp.ui.component.LottieAnimated
 import com.task.newsapp.ui.component.NewsItem
 import com.task.newsapp.ui.Routes
+import com.task.newsapp.ui.component.LottieType
 import com.task.newsapp.ui.screens.ErrorScreen
 import com.task.newsapp.ui.theme.Gray
 import com.task.newsapp.ui.theme.PrimaryBlue
@@ -53,7 +56,8 @@ fun HomeScreen(
         onCategorySelected = viewModel::onCategorySelected,
         onQueryChange = viewModel::onSearchQueryChanged,
         onRetry = viewModel::getNewsByCategory,
-        onSaveClick = viewModel::onSaveClick
+        onSaveClick = viewModel::onSaveClick,
+        onRefresh = viewModel::onRefresh
     )
 
 }
@@ -66,98 +70,105 @@ fun HomeScreenContent(
     onQueryChange: (String) -> Unit,
     onRetry: (String) -> Unit,
     onSaveClick: (Article) -> Unit,
+    onRefresh: () -> Unit
 
     ) {
 
-    LazyColumn(
-        modifier = Modifier
-            .background(Color(0xFFF3F4F6))
-            .fillMaxSize(),
-        contentPadding = PaddingValues(vertical = 16.dp)
+    PullToRefreshBox(
+        isRefreshing = state.isRefresh,
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize(),
     ) {
-        item {
-            SearchBarSection(
-                query = state.searchQuery,
-                onQueryChange = onQueryChange
-            )
-        }
-        stickyHeader {
-            CategoryChips(
-                categories = state.categories,
-                selectedCategory = state.selectedCategory,
-                onCategorySelected = onCategorySelected
-            )
-        }
-        if (state.isNewsLoading && state.isBreakingNewsLoading) {
+        LazyColumn(
+            modifier = Modifier
+                .background(Color(0xFFF3F4F6))
+                .fillMaxSize(),
+            contentPadding = PaddingValues(vertical = 16.dp)
+        ) {
             item {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    LottieAnimated(false)
-                }
-            }
-        } else if (state.error != null) {
-            item {
-                ErrorScreen(
-                    message = state.error, onRetry = { onRetry(state.selectedCategory) })
-            }
-
-        } else {
-
-            item {
-                Text(
-                    text = "Breaking News",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = Gray
-                    ),
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 8.dp,
-                        bottom = 8.dp
-                    )
+                SearchBarSection(
+                    query = state.searchQuery,
+                    onQueryChange = onQueryChange
                 )
             }
+            stickyHeader {
+                CategoryChips(
+                    categories = state.categories,
+                    selectedCategory = state.selectedCategory,
+                    onCategorySelected = onCategorySelected
+                )
+            }
+            if (state.isNewsLoading && state.isBreakingNewsLoading) {
+                item {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        LottieAnimated(LottieType.LOADING)
+                    }
+                }
+            } else if (state.error != null) {
+                item {
+                    ErrorScreen(
+                        message = state.error, onRetry = { onRetry(state.selectedCategory) })
+                }
 
-            item {
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(state.breakingNews) { article ->
-                        BreakingNewsCard(article = article) {
-                            navigateToDetails(navController, article.url)
+            } else {
+
+                item {
+                    Text(
+                        text = "Breaking News",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Gray
+                        ),
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            top = 8.dp,
+                            bottom = 8.dp
+                        )
+                    )
+                }
+
+                item {
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        items(state.breakingNews) { article ->
+                            BreakingNewsCard(article = article) {
+                                navigateToDetails(navController, article.url)
+                            }
                         }
                     }
                 }
-            }
 
-            item {
-                Text(
-                    text = "Latest News",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = Gray
-                    ),
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 24.dp,
+                item {
+                    Text(
+                        text = "Latest News",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Gray
+                        ),
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            top = 24.dp,
+                        )
                     )
-                )
-            }
-            items(state.allNews.size) { index ->
-                val article = state.allNews[index]
-                if (index >= state.allNews.size - 1 && !state.isNewsLoading) {
-                    onRetry
                 }
-                NewsItem(
-                    article = article,
-                    onClick = { navigateToDetails(navController, article.url) },
-                    onSaveClick = { onSaveClick(it) })
+                items(state.allNews.size) { index ->
+                    val article = state.allNews[index]
+                    if (index >= state.allNews.size - 1 && !state.isNewsLoading) {
+                        onRetry
+                    }
+                    NewsItem(
+                        article = article,
+                        onClick = { navigateToDetails(navController, article.url) },
+                        onSaveClick = { onSaveClick(it) })
 
 
+                }
             }
+
+
         }
-
-
     }
 }
 
@@ -182,6 +193,7 @@ private fun CategoryChips(
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
+            .fillMaxWidth()
             .background(Color(0xFFF3F4F6))
             .padding(vertical = 8.dp)
     ) {

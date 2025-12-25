@@ -10,5 +10,6 @@ data class HomeState(
     val error: String? = null,
     val searchQuery: String = "",
     val selectedCategory: String = "General",
+    val isRefresh: Boolean = false,
     val categories: List<String> = listOf( "General","Business", "Entertainment", "Health", "Science", "Sports", "Technology")
 )

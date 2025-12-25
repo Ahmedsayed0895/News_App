@@ -11,6 +11,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -71,6 +72,18 @@ class HomeViewModel @Inject constructor(
     }
 
     //endregion
+
+    fun onRefresh() {
+        viewModelScope.launch {
+            newsPage = 1
+            _homeState.value = _homeState.value.copy(isRefresh = true)
+            val job1 = launch { getBreakingNews(_homeState.value.selectedCategory) }
+            val job2 = launch { getNewsByCategory(_homeState.value.selectedCategory) }
+
+            joinAll(job1, job2)
+            _homeState.value = _homeState.value.copy(isRefresh = false)
+        }
+    }
 
     fun onCategorySelected(category: String) {
         newsPage = 1

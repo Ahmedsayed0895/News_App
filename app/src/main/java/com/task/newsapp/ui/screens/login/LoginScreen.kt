@@ -106,7 +106,8 @@ fun LoginScreenContent(
         )
         Text(
             text = "Welcome Back", style = MaterialTheme.typography.headlineLarge.copy(
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = PrimaryBlue
             )
         )
         Text(
@@ -145,7 +146,10 @@ fun LoginScreenContent(
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = PrimaryBlue,
-                    contentColor = White
+                    contentColor = White,
+                    disabledContainerColor = Gray,
+                    disabledContentColor = LightGray
+
                 ),
                 enabled = email.isNotEmpty() && password.isNotEmpty()
             ) {
@@ -156,7 +160,13 @@ fun LoginScreenContent(
         TextButton(onClick = onNavigateToRegister) {
             Text(
                 buildAnnotatedString {
-                    append("Don't have an account? ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = Gray
+                        )
+                    ) {
+                        append("Don't have an account? ")
+                    }
                     withStyle(
                         style = SpanStyle(
                             fontWeight = FontWeight.Bold,

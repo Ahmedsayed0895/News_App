@@ -17,10 +17,15 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.task.newsapp.R
 
 @Composable
-fun LottieAnimated(isError: Boolean) {
+fun LottieAnimated(type: LottieType) {
     var isPlaying by remember { mutableStateOf(true) }
     var speed by remember { mutableFloatStateOf(1f) }
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(if (isError) R.raw.error else R.raw.searching))
+    val resource = when (type) {
+        LottieType.ERROR -> R.raw.error
+        LottieType.LOADING -> R.raw.searching
+        LottieType.REFRESH -> R.raw.refresh
+    }
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(resource))
     val progress by animateLottieCompositionAsState(
         composition,
         iterations = LottieConstants.IterateForever,
@@ -31,6 +36,12 @@ fun LottieAnimated(isError: Boolean) {
     LottieAnimation(
         composition = composition,
         progress = { progress },
-        modifier = Modifier.size(if (isError)100.dp else 200.dp)
+        modifier = Modifier.size(100.dp)
     )
+}
+
+enum class LottieType {
+    ERROR,
+    LOADING,
+    REFRESH
 }

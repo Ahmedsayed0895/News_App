@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.task.newsapp.ui.component.LottieAnimated
+import com.task.newsapp.ui.component.LottieType
 import com.task.newsapp.ui.theme.PrimaryBlue
 
 @Composable
@@ -28,7 +29,7 @@ fun ErrorScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LottieAnimated(true)
+        LottieAnimated(LottieType.ERROR)
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = message,
