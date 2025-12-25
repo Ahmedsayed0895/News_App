@@ -100,7 +100,7 @@ fun HomeScreenContent(
                 CategoryChips(
                     categories = state.categories,
                     selectedCategory = state.selectedCategory,
-                    onCategorySelected = { onCategorySelected }
+                    onCategorySelected =  onCategorySelected
                 )
             }
             if (state.isNewsLoading && state.isBreakingNewsLoading) {

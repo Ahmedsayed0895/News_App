@@ -2,8 +2,8 @@ package com.task.newsapp.di
 
 import android.app.Application
 import androidx.room.Room
-import com.task.newsapp.data.dataSource.remote.Constants.BASE_URL
 import com.task.newsapp.data.dataSource.local.NewsDataBase
+import com.task.newsapp.data.dataSource.remote.Constants.BASE_URL
 import com.task.newsapp.data.dataSource.remote.NewsApi
 import dagger.Module
 import dagger.Provides

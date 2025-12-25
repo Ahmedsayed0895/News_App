@@ -1,6 +1,8 @@
 package com.task.newsapp.ui.screens.favoriteArticles
 
+import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.task.newsapp.ui.component.LottieAnimated
@@ -37,6 +40,9 @@ fun FavoriteArticleScreen(
     val articles by viewModel.favoritesState.collectAsState()
 
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeContent),
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -51,28 +57,28 @@ fun FavoriteArticleScreen(
                     titleContentColor = PrimaryBlue
                 )
             )
-
         },
-        containerColor = Color(0xFFF3F4F6),
-        modifier = Modifier.windowInsetsPadding(WindowInsets.safeContent),
-
-
-        ) { padding ->
-
+        containerColor = Color(0xFFF3F4F6)
+    ) { paddingValues ->
         if (articles.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding),
+                    .padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
                 LottieAnimated(LottieType.EMPTY)
             }
         } else {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding() + 100.dp,
+                    start = 16.dp,
+                    end = 16.dp
+                ),
+                verticalArrangement = spacedBy(8.dp)
             ) {
                 items(articles) { article ->
                     NewsItem(

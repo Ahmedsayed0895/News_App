@@ -37,6 +37,7 @@ import coil.request.ImageRequest
 import com.task.newsapp.R
 import com.task.newsapp.data.model.Article
 import com.task.newsapp.data.model.Source
+import com.task.newsapp.ui.theme.DarkBlue
 import com.task.newsapp.ui.theme.Gray
 import com.task.newsapp.ui.theme.PrimaryBlue
 import com.task.newsapp.ui.theme.White
@@ -66,7 +67,7 @@ fun NewsItem(
                     .data(article.urlToImage)
                     .crossfade(true)
                     .memoryCachePolicy(CachePolicy.ENABLED)
-                    .diskCachePolicy( CachePolicy.ENABLED)
+                    .diskCachePolicy(CachePolicy.ENABLED)
                     .error(R.drawable.ic_place_holder)
                     .build(),
                 contentDescription = "News Image",
@@ -83,7 +84,10 @@ fun NewsItem(
             ) {
                 Text(
                     text = article.title ?: "No Title",
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = DarkBlue
+                    ),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )

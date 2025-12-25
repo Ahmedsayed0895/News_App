@@ -107,6 +107,7 @@ fun LoginScreenContent(
         DevicePosture.TABLET_PORTRAIT -> {
             Column(
                 modifier = Modifier
+                    .windowInsetsPadding(WindowInsets.systemBars)
                     .background(LightGray)
                     .fillMaxSize()
                     .padding(16.dp),
