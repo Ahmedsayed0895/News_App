@@ -40,7 +40,7 @@ import com.task.newsapp.ui.component.BreakingNewsCard
 import com.task.newsapp.ui.component.LottieAnimated
 import com.task.newsapp.ui.component.LottieType
 import com.task.newsapp.ui.component.NewsItem
-import com.task.newsapp.ui.screens.ErrorScreen
+import com.task.newsapp.ui.screens.error.ErrorScreen
 import com.task.newsapp.ui.theme.Gray
 import com.task.newsapp.ui.theme.PrimaryBlue
 import java.net.URLEncoder

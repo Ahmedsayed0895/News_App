@@ -1,4 +1,4 @@
-package com.task.newsapp.ui.screens
+package com.task.newsapp.ui.screens.error
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.task.newsapp.ui.component.LottieAnimated
 import com.task.newsapp.ui.component.LottieType
+import com.task.newsapp.ui.theme.LightGray
 import com.task.newsapp.ui.theme.PrimaryBlue
 
 @Composable
@@ -47,7 +48,7 @@ fun ErrorScreen(
             onClick = onRetry,
             colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
         ) {
-            Text("Retry")
+            Text("Retry", color = LightGray)
         }
     }
 }
