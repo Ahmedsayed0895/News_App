@@ -3,9 +3,12 @@ package com.task.newsapp.ui.screens.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -33,8 +36,11 @@ fun ProfileScreen(
 ) {
     Column(
         modifier = Modifier
+            .windowInsetsPadding(WindowInsets.safeContent)
             .background(Color(0xFFF3F4F6))
             .fillMaxSize(),
+
+
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
