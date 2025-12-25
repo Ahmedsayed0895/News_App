@@ -1,4 +1,4 @@
-package com.task.newsapp.ui.screens.home
+package com.task.newsapp.ui.component
 
 
 import androidx.compose.foundation.background

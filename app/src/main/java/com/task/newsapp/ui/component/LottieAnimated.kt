@@ -1,4 +1,4 @@
-package com.task.newsapp.ui.screens
+package com.task.newsapp.ui.component
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable

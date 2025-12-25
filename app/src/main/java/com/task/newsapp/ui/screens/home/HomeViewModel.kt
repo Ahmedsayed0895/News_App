@@ -12,6 +12,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -89,8 +90,8 @@ class HomeViewModel @Inject constructor(
         }
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
+            delay(500L)
             try {
-                delay(500)
                 if (newsPage == 1) {
                     _homeState.value = _homeState.value.copy(isNewsLoading = true)
                 }
@@ -111,11 +112,11 @@ class HomeViewModel @Inject constructor(
                 newsPage++
                 isPaginating = false
             } catch (e: Exception) {
+                if (e is CancellationException) throw e
                 val errorMessages = NetworkExceptions.getErrorMessage(e)
 
                 _homeState.value = _homeState.value.copy(
                     error = errorMessages,
-                    isBreakingNewsLoading = false,
                     isNewsLoading = false
                 )
                 isPaginating = false

@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.task.newsapp.ui.screens.home.NewsItem
+import com.task.newsapp.ui.component.NewsItem
 import com.task.newsapp.ui.screens.home.navigateToDetails
 import com.task.newsapp.ui.theme.PrimaryBlue
 

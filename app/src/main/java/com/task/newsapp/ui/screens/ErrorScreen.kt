@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.task.newsapp.ui.component.LottieAnimated
 import com.task.newsapp.ui.theme.PrimaryBlue
 
 @Composable

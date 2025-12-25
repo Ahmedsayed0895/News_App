@@ -1,30 +1,26 @@
 package com.task.newsapp.ui.screens.home
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,9 +31,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.task.newsapp.data.model.Article
+import com.task.newsapp.ui.component.AppTextField
+import com.task.newsapp.ui.component.BreakingNewsCard
+import com.task.newsapp.ui.component.LottieAnimated
+import com.task.newsapp.ui.component.NewsItem
 import com.task.newsapp.ui.navigation.Routes
 import com.task.newsapp.ui.screens.ErrorScreen
-import com.task.newsapp.ui.screens.LottieAnimated
+import com.task.newsapp.ui.theme.Gray
 import com.task.newsapp.ui.theme.PrimaryBlue
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -49,127 +50,139 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.homeState.collectAsState()
-
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("News App", fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFFF3F4F6),
-                    titleContentColor = PrimaryBlue
-                )
-            )
-        },
-        containerColor = Color(0xFFF3F4F6)
+    HomeScreenContent(
+        navController = navController,
+        state = state,
+        onCategorySelected = viewModel::onCategorySelected,
+        onQueryChange = viewModel::onSearchQueryChanged,
+        onRetry = viewModel::getNewsByCategory,
+        onSaveClick = viewModel::onSaveClick
     )
-    { paddingValues ->
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding())
+}
+
+@Composable
+fun HomeScreenContent(
+    navController: NavController,
+    state: HomeState,
+    onCategorySelected: (String) -> Unit,
+    onQueryChange: (String) -> Unit,
+    onRetry: (String) -> Unit,
+    onSaveClick: (Article) -> Unit,
+
+    ) {
+
+    Box(
+        modifier = Modifier
+            .background(Color(0xFFF3F4F6))
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
+    ) {
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-
-            SearchBarSection(
-                query = state.searchQuery,
-                onQueryChange = viewModel::onSearchQueryChanged
-            )
-
-            CategoryChips(
-                categories = state.categories,
-                selectedCategory = state.selectedCategory,
-                onCategorySelected = viewModel::onCategorySelected
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            if (state.isNewsLoading || state.isBreakingNewsLoading) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    LottieAnimated(false)
+            item {
+                SearchBarSection(
+                    query = state.searchQuery,
+                    onQueryChange = onQueryChange
+                )
+            }
+            stickyHeader {
+                CategoryChips(
+                    categories = state.categories,
+                    selectedCategory = state.selectedCategory,
+                    onCategorySelected = onCategorySelected
+                )
+            }
+            if (state.isNewsLoading && state.isBreakingNewsLoading) {
+                item {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        LottieAnimated(false)
+                    }
                 }
             } else if (state.error != null) {
-                ErrorScreen(message = state.error ?: "Unknown Error") {
-                    viewModel.getNewsByCategory(state.selectedCategory)
+                item {
+                    ErrorScreen(
+                        message = state.error, onRetry = { onRetry(state.selectedCategory) })
                 }
+
             } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 16.dp)
-                ) {
 
-                    item {
-                        Text(
-                            text = "Breaking News",
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                            modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
+                item {
+                    Text(
+                        text = "Breaking News",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Gray
+                        ),
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            top = 8.dp,
+                            bottom = 8.dp
                         )
-                    }
+                    )
+                }
 
-                    item {
-                        LazyRow(
-                            contentPadding = PaddingValues(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            items(state.breakingNews) { article ->
-                                BreakingNewsCard(article = article) {
-                                    navigateToDetails(navController, article.url)
-                                }
+                item {
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        items(state.breakingNews) { article ->
+                            BreakingNewsCard(article = article) {
+                                navigateToDetails(navController, article.url)
                             }
                         }
                     }
+                }
 
-                    item {
-                        Text(
-                            text = "Latest News",
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                            modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 8.dp)
+                item {
+                    Text(
+                        text = "Latest News",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Gray
+                        ),
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            top = 24.dp,
                         )
+                    )
+                }
+                items(state.allNews.size) { index ->
+                    val article = state.allNews[index]
+                    if (index >= state.allNews.size - 1 && !state.isNewsLoading) {
+                        onRetry
                     }
-
-                    items(state.allNews.size) { index ->
-                        val article = state.allNews[index]
-                        if (index >= state.allNews.size - 1 && !state.isNewsLoading) {
-                            viewModel.getNewsByCategory(state.selectedCategory)
-                        }
-                        NewsItem(
-                            article = article,
-                            onClick = { navigateToDetails(navController, article.url) },
-                            onSaveClick = { clickedArticle ->
-                                viewModel.onSaveClick(clickedArticle)
-                            })
+                    NewsItem(
+                        article = article,
+                        onClick = { navigateToDetails(navController, article.url) },
+                        onSaveClick = { onSaveClick(it) })
 
 
-                    }
                 }
             }
+
+
         }
     }
 }
 
 
 @Composable
-fun SearchBarSection(query: String, onQueryChange: (String) -> Unit) {
-    OutlinedTextField(
+private fun SearchBarSection(query: String, onQueryChange: (String) -> Unit) {
+    AppTextField(
         value = query,
         onValueChange = onQueryChange,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        placeholder = { Text("Search news...") },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = ""
-            )
-        },
-        shape = MaterialTheme.shapes.medium,
-        singleLine = true,
-        textStyle = MaterialTheme.typography.bodyMedium.copy(color = Color.Black),
+        placeholderText = "Search news...",
+        leadingIcon = Icons.Default.Search,
     )
 }
 
 @Composable
-fun CategoryChips(
+private fun CategoryChips(
     categories: List<String>,
     selectedCategory: String,
     onCategorySelected: (String) -> Unit
@@ -177,7 +190,9 @@ fun CategoryChips(
     LazyRow(
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.padding(vertical = 8.dp)
+        modifier = Modifier
+            .background(Color(0xFFF3F4F6))
+            .padding(vertical = 8.dp)
     ) {
         items(categories) { category ->
             val isSelected = category == selectedCategory
@@ -194,7 +209,8 @@ fun CategoryChips(
                     enabled = true,
                     selected = isSelected,
                     borderColor = PrimaryBlue,
-                )
+                ),
+                shape = RoundedCornerShape(24.dp)
             )
         }
     }
